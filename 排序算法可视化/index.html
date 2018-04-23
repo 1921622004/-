@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        ul{
+            list-style: none;
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+        }
+        ul li{
+            display: inline-block;
+            background-color: #00c8d5;
+            width: 30px;
+            margin: 5px;
+            text-align: center;
+            transition: all .3s;
+        }
+        .sort{
+            background-color: #f5e327;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <input type="text" id="numValue">
+    <input type="button" value="左侧入" id="leftin">
+    <input type="button" value="右侧入" id="rightin">
+    <input type="button" value="左侧出" id="leftout">
+    <input type="button" value="右侧出" id="rightout">
+    <input type="button" value="冒泡" id="bubble">
+    <input type="button" value="打乱" id="mix">
+    <input type="button" value="插入" id="insert">
+    <ul id="box">
+        <li style="height: 12px" data-num="12"></li>
+        <li style="height: 65px" data-num="65"></li>
+        <li style="height: 34px" data-num="34"></li>
+        <li style="height: 89px" data-num="89"></li>
+        <li style="height: 18px" data-num="18"></li>
+        <li style="height: 49px" data-num="49"></li>
+    </ul>
+</div>
+
+
+</body>
+</html>
+<script src="main.js"></script>
