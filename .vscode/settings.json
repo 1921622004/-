@@ -1,0 +1,11 @@
+{
+    "workbench.colorTheme": "Atom One Dark",
+    "editor.fontFamily": "'Fira code',Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "files.autoSave": "afterDelay",
+    "background.enabled": true,
+    "background.useDefault": false,
+    "background.customImages": [
+        "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-550229.jpg"
+    ]
+}

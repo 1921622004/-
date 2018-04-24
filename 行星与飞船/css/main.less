@@ -1,0 +1,104 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+}
+html,body{
+    font-size: 14px;
+}
+ul{
+    list-style: none;
+}
+.wrapper{
+    margin: 100px auto;
+    width: 1050px;
+    #wrapper{
+        margin-left: 202px;
+        width: 606px;
+        height: 600px;
+        background-color: #1f2a3e;
+        background-clip: content-box;
+        position: relative;
+        .earth{
+            width: 150px;
+            height: 150px;
+            background-color: lightblue;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -75px;
+            margin-left: -75px;
+        }
+        .line{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            border: 2px solid lightcyan;
+        }
+        .line1{
+            width: 200px;
+            height: 200px;
+        }
+        .line2{
+            width: 300px;
+            height: 300px;
+        }
+        .line3{
+            width: 400px;
+            height: 400px;
+        }
+        .spaceship{
+            width: 30px;
+            height: 30px;
+            background-color: #eee;
+            border-radius: 50%;
+            position: absolute;
+            left: 285px;
+        }
+        #spaceship1{
+            top: 185px;
+            transform-origin: 60% 390%;
+        }
+        #spaceship2{
+            top: 135px;
+            // transform: rotate(90deg);
+            transform-origin: 60% 555%;
+        }
+        #spaceship3{
+            top: 85px;
+            // transform: rotate(90deg);
+            transform-origin: 60% 720%;
+        }
+        .info{
+            color: #eee;
+            font-size: 16px;
+        }
+    }
+    .log{
+        float: left;
+        width: 200px;
+        height: 800px;
+        border: 2px solid #dedede;
+    }
+    #commender{
+        margin-left:204px;
+        width: 600px;
+        height: 200px;
+        border: 2px solid #dedede;
+        a{
+            display: inline-block;
+            width: 50px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            color: #dedede;
+            border: 2px solid lightblue;
+        }
+    }
+}
+
