@@ -1,0 +1,146 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+}
+html,body{
+    font-size: 14px;
+}
+ul{
+    list-style: none;
+}
+.wrapper{
+    margin: 0 auto;
+    width: 1400px;
+    .log{
+        float: left;
+        width: 200px;
+        height: 900px;
+    }
+    #wrapper{
+        width: 500px;
+        height: 900px;
+        float: left;
+        #trueWrapper{
+            width: 500px;
+            height: 500px;
+            background-color: #1f2a3e;
+            background-clip: content-box;
+            position: relative;
+            .earth{
+                width: 150px;
+                height: 150px;
+                background-color: lightblue;
+                border-radius: 50%;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                margin-top: -75px;
+                margin-left: -75px;
+            }
+            .line{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                border-radius: 50%;
+                border: 2px solid lightcyan;
+            }
+            .line1{
+                width: 200px;
+                height: 200px;
+            }
+            .line2{
+                width: 300px;
+                height: 300px;
+            }
+            .line3{
+                width: 400px;
+                height: 400px;
+            }
+            .spaceship{
+                width: 100px;
+                height: 20px;
+                line-height: 20px;
+                text-align: center;
+                color: red;
+                background-color: beige;
+                border-radius: 10px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                margin-left: -50px;
+                .mask{
+                    position: absolute;
+                    width: 60%;
+                    height: 100%;
+                    right: 0;
+                    background-color: #1f2a3e;
+                    border-radius: 10px;
+                    opacity: 0.7;
+                }
+            }
+            #spaceship1{
+                transform-origin: 53% 530%;
+                margin-top: -110px;
+            }
+            #spaceship2{
+                transform-origin: 53% 782%;
+                margin-top: -160px;
+            }
+            #spaceship3{
+                transform-origin: 53% 1030%;
+                margin-top: -210px;
+            }
+        }
+        #commender{
+            width: 900px;
+            .create{
+                display: block;
+                color: #eee;
+                background-color: darkcyan;
+                width: 100px;
+                height: 30px;
+                text-align: center;
+                line-height: 30px;
+                border-radius: 15px;
+            }
+            .control{
+                li{
+                    line-height: 30px;
+                    margin-bottom: 20px;
+                    a{
+                        display: inline-block;
+                        width: 100px;
+                        height: 30px;
+                        color: cornsilk;
+                        background-color: cadetblue;
+                        border-radius: 15px; 
+                        text-align: center;
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+    }
+    .info{
+        float: left;
+        padding: 25px;
+        table{
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: center;
+            .first{
+                background-color: gray;
+            }
+            td{
+                width: 100px;
+                height: 50px;
+                border: 1px solid gray;
+            }    
+        }
+    }
+}
+

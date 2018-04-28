@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>行星与飞船</title>
+    <link rel="stylesheet/less" href="css/main.less">
+    <script src="https://cdn.bootcss.com/less.js/2.5.3/less.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="log">
+            <h3>console log</h3>
+        </div>
+        <div id="wrapper">
+            <div id="trueWrapper">
+                <div class="earth"></div>
+                <div class="line1 line"></div>
+                <div class="line2 line"></div>
+                <div class="line3 line"></div>
+                <div class="spaceship" id="spaceship1">
+                    <div class="mask"></div>
+                    <p>
+                        <span id="shipNumber1">1</span>号-
+                        <span id="energy1">60</span>% </span>
+                    </p>
+                </div>
+                <div class="spaceship" id="spaceship2">
+                    <div class="mask"></div>
+                    <p>
+                        <span id="shipNumber2">1</span>号-
+                        <span id="energy2">60</span>% </span>
+                    </p>
+                </div>
+                <div class="spaceship" id="spaceship3">
+                    <div class="mask"></div>
+                    <p>
+                        <span id="shipNumber3">1</span>号-
+                        <span id="energy3">60</span>% </span>
+                    </p>
+                </div>
+            </div>
+            <div id="commender">
+                <h3>commender</h3>
+                <div>
+                    <label>动力系统选择：</label>
+                    <input type="radio" name="power" id="">前进号（速度5%，消耗5%/s）
+                    <input type="radio" name="power" id="">奔腾号（速度8%，消耗8%/s）
+                    <input type="radio" name="power" id="">超越号（速度10%，消耗12%/s）
+                </div>
+                <div>
+                    <label>能源系统选择：</label>
+                    <input type="radio" name="energy" id="1">劲量型（补充能源速度2%/s）
+                    <input type="radio" name="energy" id="2">光能型（补充能源速度3%/s）
+                    <input type="radio" name="energy" id="3">永久型（补充能源速度4%/s）
+                </div>
+                <a href="javascript:void(0)" class="create" id="create">创建新飞船</a>
+                <ul class="control">
+                    <li>
+                        <span>对<span id="control1">1</span>号飞船下达指令</span>
+                        <a href="javascript:void(0)" class="btn">launch</a>
+                        <a href="javascript:void(0)" class="btn">fly</a>
+                        <a href="javascript:void(0)" class="btn">stop</a>
+                        <a href="javascript:void(0)" class="btn">destory</a>
+                    </li>
+                    <li>
+                        <span>对<span id="control2">2</span>号飞船下达指令</span>
+                        <a href="javascript:void(0)" class="btn">launch</a>
+                        <a href="javascript:void(0)" class="btn">fly</a>
+                        <a href="javascript:void(0)" class="btn">stop</a>
+                        <a href="javascript:void(0)" class="btn">destory</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="info">
+            <table>
+                <tr class="first">
+                    <td>飞船</td>
+                    <td>动力系统</td>
+                    <td>能源系统</td>
+                    <td>当前飞行状态</td>
+                    <td>剩余能源</td>
+                </tr>
+                <tr>
+                    <td>1号</td>
+                    <td>前进号</td>
+                    <td>劲量型</td>
+                    <td>飞行中</td>
+                    <td>34%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
