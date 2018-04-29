@@ -7,6 +7,7 @@ a{
 }
 html,body{
     font-size: 14px;
+    overflow-x: hidden;
 }
 ul{
     list-style: none;
@@ -72,9 +73,10 @@ ul{
                 left: 50%;
                 top: 50%;
                 margin-left: -50px;
+                transform: rotate(0deg);
                 .mask{
                     position: absolute;
-                    width: 60%;
+                    width: 100px;
                     height: 100%;
                     right: 0;
                     background-color: #1f2a3e;
@@ -85,6 +87,7 @@ ul{
             #spaceship1{
                 transform-origin: 53% 530%;
                 margin-top: -110px;
+                
             }
             #spaceship2{
                 transform-origin: 53% 782%;
