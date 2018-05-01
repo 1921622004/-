@@ -25,7 +25,12 @@ $(function () {
         $head = $("#head"),
         $order = $("#order"),
         $value = $("#value"),
-        randomRotate = Math.floor(Math.random() * 4);
+        randomRotate = Math.floor(Math.random() * 4),
+        oUl = document.getElementById("liBox"),
+        liBox,
+        indexWrapper = document.querySelector('.indexWrapper'),
+        inputVlaue,
+        orderAry;
 
     let GO = {
         go0: function () {
@@ -160,8 +165,37 @@ $(function () {
         $head.rotate(cur,randomRotate);
     }
     $order.on('click', () => {
+        let i = 0;
+        let timer = setInterval(()=>{
+            if(i === orderAry.length){
+                clearInterval(timer)
+            }
+            order[orderAry[i]]();
+            i++;
+        },1000)
+    })
+
+    $value.on('blur',function(){
         debugger;
-        let value = $value.val();
-        order[value]();
+        let str = ``;
+        inputValue = $value.val();
+        orderAry = inputValue.split(/\n/g);
+        for (let j = 0; j < orderAry.length; j++) {
+            str += `<li>${j}</li>`
+        }
+        oUl.innerHTML = str;
+        liBox = oUl.getElementsByTagName('li');
+        let isALL = true; 
+        for(let i = 0, len = orderAry.length;i<len;i++){
+            let a = orderAry[i];
+            if(!order[a]){
+                $(liBox).eq(i).addClass('error');
+                isALL = false;
+            }
+        }
+    })
+    $value.on('scroll',function(){
+        let curS = $value[0].scrollTop;
+        indexWrapper.scrollTop = curS;
     })
 })

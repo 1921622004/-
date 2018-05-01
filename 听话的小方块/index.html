@@ -18,7 +18,7 @@
 
         .wrapper {
             position: relative;
-            margin: 100px auto;
+            margin: 50px auto;
             width: 400px;
 
             height: 400px;
@@ -62,6 +62,34 @@
             background-color: lightcoral;
             text-decoration: none;
         }
+        textarea{
+            display: block;
+            float: left;
+            width: 300px;
+            height: 62px;
+            line-height: 16px;
+        }
+        .valueBox .index{
+            
+            float: left;
+            width: 20px;
+        }
+        .valueBox .index li {
+            width: 100%;
+            font-size: 12px;
+            line-height: 14px;
+            height: 16px;
+        }
+        .valueBox .index .error{
+            background-color: red;
+            color: #eee;
+        }
+        .indexWrapper{
+            float: left;
+            overflow: hidden;
+            height: 64px;
+            margin-top:10px;
+        }
     </style>
 </head>
 
@@ -80,7 +108,15 @@
         <div id="box">
             <div id="head" class="up"></div>
         </div>
-        <input type="text" id="value">
+        <div class="valueBox">
+            <div class="indexWrapper">
+                <ul class="index" id="liBox">
+                </ul>
+            </div>
+            
+            <textarea id="value"  rows="4" style="margin-top: 10px"></textarea>
+        </div>
+        
         <a href="javascript:;" id="order">Go</a>
     </div>
 
