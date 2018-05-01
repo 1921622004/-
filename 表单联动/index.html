@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        form{
+            display: block;
+            width: 500px;
+            margin: 20px auto;
+        }
+        #work{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <label>
+            <input type="radio" name="career" value="1" checked="checked" id="sBtn">在校生</label>
+        <label>
+            <input type="radio" name="career" value="2" id="nsBtn">非在校生</label>
+        <div id="student">
+            <label>城市</label>
+            <select name="city" id="city">
+                <option value="bj">北京</option>
+                <option value="hlj">黑龙江</option>
+                <option value="sh">上海</option>
+            </select>
+            <label>学校</label>
+            <select name="school" id="school">
+                <option value="">北京大学</option>
+                <option value="">清华大学</option>
+                <option value="">北京航天大学</option>
+            </select>
+        </div>
+        <div id="work">
+            <label>就业单位</label>
+            <input type="text" class="input">
+        </div>
+    </form>
+
+    <script src="../jquery.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
