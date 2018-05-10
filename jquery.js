@@ -178,7 +178,9 @@ jQuery.extend = jQuery.fn.extend = function() {
 		length = arguments.length,
 		deep = false;
 
-	// Handle a deep copy situation
+	//target代表的是一个对象，如果传入这个参数，代表要把后面对应的方法传递给它，作为新的属性。
+	//deep为true，递归合并
+	// 传进来第一个值是布尔值，deep值为第一个参数
 	if ( typeof target === "boolean" ) {
 		deep = target;
 
@@ -192,7 +194,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		target = {};
 	}
 
-	// extend jQuery itself if only one argument is passed
+	//如果没有传target，则给target赋值本身，给JQ本身添加方法
 	if ( i === length ) {
 		target = this;
 		i--;
@@ -203,7 +205,9 @@ jQuery.extend = jQuery.fn.extend = function() {
 		if ( (options = arguments[ i ]) != null ) {
 			// Extend the base object
 			for ( name in options ) {
+				//被赋值对象的当前值
 				src = target[ name ];
+				//传入对象的当前值
 				copy = options[ name ];
 
 				// Prevent never-ending loop
@@ -275,6 +279,7 @@ jQuery.extend({
 
 	isEmptyObject: function( obj ) {
 		var name;
+		//如果对象中存在未定义的属性名，则为空对象
 		for ( name in obj ) {
 			return false;
 		}
@@ -287,6 +292,8 @@ jQuery.extend({
 		// Must be an Object.
 		// Because of IE, we also have to check the presence of the constructor property.
 		// Make sure that DOM nodes and window objects don't pass through, as well
+
+		//通过JQ.type判断是否是对象，且排除obj是DOM节点或者window的情况
 		if ( !obj || jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
 			return false;
 		}
@@ -294,6 +301,10 @@ jQuery.extend({
 		try {
 			// Not own constructor property must be Object
 			if ( obj.constructor &&
+
+				//hasOwn <=>  {}.hasOwnProperty
+				//必须拥有constructor属性而且这个对象的原型必须要要有isPrototypeOf方法
+				//Function.isPrototypeOf(obj) 检测obj是否继承自Function
 				!hasOwn.call(obj, "constructor") &&
 				!hasOwn.call(obj.constructor.prototype, "isPrototypeOf") ) {
 				return false;
@@ -318,6 +329,7 @@ jQuery.extend({
 		return key === undefined || hasOwn.call( obj, key );
 	},
 
+	//检测数据类型
 	type: function( obj ) {
 		if ( obj == null ) {
 			return obj + "";
@@ -330,11 +342,15 @@ jQuery.extend({
 	// Evaluates a script in a global context
 	// Workarounds based on findings by Jim Driscoll
 	// http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
+
+	//全局性的执行一段JS代码
 	globalEval: function( data ) {
 		if ( data && jQuery.trim( data ) ) {
 			// We use execScript on Internet Explorer
 			// We use an anonymous function so that context is window
 			// rather than jQuery in Firefox
+
+			//execScript是IE独有为了支持IE
 			( window.execScript || function( data ) {
 				window[ "eval" ].call( window, data );
 			} )( data );
@@ -347,6 +363,13 @@ jQuery.extend({
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
 	},
 
+
+	/**
+	 * elem 元素
+	 * name 节点名称
+	 *   判断元素是否就是这个节点名称 不区分大小写
+	 * 返回布尔值
+	 */
 	nodeName: function( elem, name ) {
 		return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 	},
@@ -358,11 +381,16 @@ jQuery.extend({
 			length = obj.length,
 			isArray = isArraylike( obj );
 
+		//第三个参数如果存在时，在回调函数执行时，会用apply方法，将参数传递进去
+		//同时在每次回调函数执行时，将this指向当前遍历的这一项
+
+		//如果传递了第三个参数的话，在回调函数执行的时候就无法获取到index值
 		if ( args ) {
 			if ( isArray ) {
 				for ( ; i < length; i++ ) {
 					value = callback.apply( obj[ i ], args );
-
+					//声明一个变量来接受回调函数的返回值，如果返回值为false停止循环，同时函数默认
+					//不写return时返回undefined，直接判断仍然为false，所以需要value===false
 					if ( value === false ) {
 						break;
 					}
@@ -411,8 +439,8 @@ jQuery.extend({
 	// results is for internal usage only
 	makeArray: function( arr, results ) {
 		var ret = results || [];
-
 		if ( arr != null ) {
+			//Object构造函数
 			if ( isArraylike( Object(arr) ) ) {
 				jQuery.merge( ret,
 					typeof arr === "string" ?
@@ -422,7 +450,6 @@ jQuery.extend({
 				push.call( ret, arr );
 			}
 		}
-
 		return ret;
 	},
 
@@ -449,6 +476,9 @@ jQuery.extend({
 	},
 
 	merge: function( first, second ) {
+
+		// +  的作用就是把后面的数值变为整数   类似于parse.float
+		// 而且如果second.length为null时会直接转换成0   用parseFloat会变成NaN
 		var len = +second.length,
 			j = 0,
 			i = first.length;
@@ -501,7 +531,7 @@ jQuery.extend({
 		if ( isArray ) {
 			for ( ; i < length; i++ ) {
 				value = callback( elems[ i ], i, arg );
-
+				//
 				if ( value != null ) {
 					ret.push( value );
 				}
