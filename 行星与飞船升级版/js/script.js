@@ -1,5 +1,5 @@
 
-// 基于任务二十七，我们继续改善
+
 // 第二代宇宙飞船系统进步了很多，但是我们依然无法知道飞船的能源消耗情况，可能有的时候我们发出开始飞行的指令，
 // 但飞船早就没有能量了，所以我们再次进行升级，这次我们需要增加一个飞船状态的监视系统
 // 我们为每个飞船增加一个信号发射器，飞船会通过BUS系统定时（比如每秒）广播自己的飞行状态。
@@ -152,8 +152,10 @@ class Ship {
             this.minusEnergyTimer = setInterval(() => {
                 this.initEnergy -= this.powerNum;
                 if (this.initEnergy <= 0) {
+                    this.initEnergy = 0;
                     this.status = 0;
                     clearInterval(this.flyTimer);
+                    clearInterval(this.minusEnergyTimer);
                     this.flyTimer = null;
                 }
                 this.info.html(this.initEnergy);
