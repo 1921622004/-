@@ -74,7 +74,6 @@ let dragRender = function () {
 
         resolveDirection(e) {
             e.preventDefault();
-
             if (e.target.className === 'float') {
                 this.curMoveX = e.clientX;
                 this.curMoveY = e.clientY;
@@ -85,7 +84,7 @@ let dragRender = function () {
                     w = this.width,
                     h = this.height;
 
-                //在左上角
+                    //在左上角
                 if ((x - l) <= 10 && (y - t) <= 10) {
                     this.ele.style.cursor = 'nwse-resize';
                     this.scaleDirection = 'leftTop'
@@ -241,7 +240,6 @@ let dragRender = function () {
                     break;
                 case 'botMiddle':
                     heightChangeFn.call(this, e);
-                    
                     break;
                 case 'botRight':
                     widthChangeFn.call(this, e);
