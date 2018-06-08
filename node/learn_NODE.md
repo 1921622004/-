@@ -6,7 +6,6 @@
 > node安装后，电脑上会自动安装npm，基于npm安装下载JS模块
 
 ###node做后台的优势和特点
-> 传统后台语言：JAVA/Python/PHP/C#
 - 单线程
 - 基于V8引擎渲染：快
 - 非阻塞异步I/O操作：I/O（input/output）对文件的读写
@@ -41,7 +40,36 @@ bower 从github下载安装
 
 
 
-###module.exports
+###module.exports 
+- 每一个模块都默认传了5个参数
+    - exports       导入      模块中的this就是exports
+    - require       导出
+    - module        寻找模块经历的路径
+    - __filename    文件的绝对路径
+    - __dirname     文件的绝对目录
+
+```javascript
+(function(exports,require,module,__filename,__dirname){
+    var greet = function(){
+        console.log('hello')
+    };
+    module.exports = greet;
+})
+fn(module.exports,require,module,filename,dirname)
+return module.exports
+```
+**分类**
+1. 内置模块 node自带的模块，自带的模块不需要安装直接require导入，路径不需要./，直接模块名字就可以
+2. 自定义模块 自己写的模块，使用require需要带./
+3. 第三方模块 需要安装 安装的第三方模块都在node_modules文件夹里面
+    导入的时候不需要./ 
+    1. 先看是不是内置模块 不是再找第三方模块
+    2. 找安装的node_modules的顺序是按照module.path顺序找的
+    
+
+> 导入的文件如果省略后缀，文件后缀的顺序会按照下面的extensions来匹配
+> extensions: { '.js': [Function], '.json': [Function], '.node': [Function] }
+
 ```javascript
 var cachedModule = Module._cahed[filename];
 if(cachedModule){

@@ -8,9 +8,25 @@
 </head>
 <body>
     <div id="app">
-        <my-input></my-input>
-        <my-checkbox></my-checkbox>
+        <my-input :rule="reg" :err-msg="'no'"></my-input>
+        <my-input :rule="reg" :disabled="m"></my-input>
+        <my-input :rule="reg" :place-holder="'请输入用户名'"></my-input>
+        <!-- <my-checkbox></my-checkbox> -->
     </div>
 </body>
 </html>
-<script src="1.input&checkBox.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+<script type="module">
+    import {input,checkBox} from "./1.input&checkBox.js"
+    let app = new Vue({
+        el:'#app',
+        data:{
+            m:true,
+            reg:/^1\d{10}$/
+        },
+        component:{
+            myInput:input,
+            myCheckbox:checkBox
+        }
+    })
+</script>
