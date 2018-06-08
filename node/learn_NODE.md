@@ -1,6 +1,46 @@
 #NODE
 ----
 
+###NPM
+[Node Package Manager] ：模块管理的工具
+> node安装后，电脑上会自动安装npm，基于npm安装下载JS模块
+
+###node做后台的优势和特点
+> 传统后台语言：JAVA/Python/PHP/C#
+- 单线程
+- 基于V8引擎渲染：快
+- 非阻塞异步I/O操作：I/O（input/output）对文件的读写
+- event-driven：事件驱动
+
+
+###npm 
+**常规操作**
+```
+    npm install xxx 把模块安装到当前目录（在哪个目录下执行的命令，这个目录就是当前目录）
+    npm install xxx -g 把模块安装在全局目录下
+    npm unistall xxx / npm install xxx -g 卸载模块
+    npm view xxx > xxx.version.txt  查看板块的历史版本信息
+```
+yarn add xxx
+
+nrm ls 查看可用源
+nrm use xxx  切换源
+
+bower 从github下载安装
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###module.exports
 ```javascript
 var cachedModule = Module._cahed[filename];
@@ -183,5 +223,95 @@ http.createServer((req,res) => {
 
 
 
+#Express
+> app监听函数上，扩展了很多方法，包括get、post、delete、put，RESTful风格中的动词
+> app.方法名('路径名',方法)
+> 从上到下匹配，如果匹配到了并且相应结束，就不会继续向下走
+> express重点是扩展了 req，res的属性。
+
+**express路由**
+必须method和path全都匹配上执行对应的callback
+```javascript
+app[method](path,function(){});
+app.all("*",function(){});
+```
 
 
+
+
+**路径参数路由**
+把匹配到的结果生成一个对象放到req.params上
+```
+app.get('/user/:id/:name')
+```
+
+*实现*
+```javascript
+let url = '/user/1/2';
+let url2 = '/user/:id/:name';
+let keyAry = [];
+let valAry = [];
+let regStr = url2.replace(/:[^\/]+/g,(...arg) => {
+    keyAry.push(arg[0].slice(1));
+    return '([^\/]+)'
+})
+let reg = new RegExp(regStr);
+valAry = reg.exec(url);
+let obj = {};
+for (let index = 0; index < keyAry.length; index++) {
+    let item = keyAry[index];
+    obj[item] = valAry[index + 1];
+}
+console.log(obj);
+```
+
+
+**req**
+- req.params   路径参数
+- req.url      整个的路径
+- req.path     pathname路径 不包括问号
+- req.headers  请求头
+- req.method   请求方法
+- req.query    请求参数
+
+
+**res**
+- res.json()        返回json
+- res.sendFile()    返回文件    不能通过../查找  root不支持   像查找可以使用path模块
+- res.sendStatus()
+- res.send()
+
+
+
+
+###中间件
+> 当我们访问到最终目标之前执行的内容
+*功能及特点*
+- next决定是否继续执行
+- 处理公共逻辑
+- 可以进行权限判断
+- 可以对req，res的属性进行扩充
+- 中间件放在要执行的路径的上面
+- 中间件默认情况下都匹配，也可以执行路径。
+- 错误中间件，在页面的最后，参数是4个，err，req，res，next
+
+*next*
+- next函数主要作用是将负责权交给下一个中间件，如果当前像next()中传入参数（除了‘route’字符串），会认为当前请求有错误的输出，因此跳过后续其他非错误处理和路由/中间件函数，如果需做特殊处理，
+
+```
+let expres = require('express');
+let app = express();
+app.use([path,](req,res,next) => {
+
+})
+```
+
+
+
+**body-parser**
+```javascript
+//解析表单格式  把表单内的数据  解析后放在req.body上
+bodyParser.urlencoded({extended:false});   
+//解析json格式， 把json字符串 转化为对象  解析后放在req.body上
+bodyParser.json()
+```
