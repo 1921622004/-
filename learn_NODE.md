@@ -1,18 +1,9 @@
-#NODE
+# NODE
 ----
 
-###NPM
+### NPM
 [Node Package Manager] ：模块管理的工具
 > node安装后，电脑上会自动安装npm，基于npm安装下载JS模块
-
-###node做后台的优势和特点
-- 单线程
-- 基于V8引擎渲染：快
-- 非阻塞异步I/O操作：I/O（input/output）对文件的读写
-- event-driven：事件驱动
-
-
-###npm 
 **常规操作**
 ```
     npm install xxx 把模块安装到当前目录（在哪个目录下执行的命令，这个目录就是当前目录）
@@ -21,31 +12,70 @@
     npm view xxx > xxx.version.txt  查看板块的历史版本信息
 ```
 yarn add xxx
-
 nrm ls 查看可用源
 nrm use xxx  切换源
-
 bower 从github下载安装
 
+**在本地项目中基于NPM/YARN安装第三方模块**
+1. 在本地项目中创建一个package.json的文件
+作用：把当前项目所有依赖的第三方模块信息包含模块名称以及版本号等信息都记录下来，可以在这里配置一些可执行的命令脚本
+基于yarn会默认生成一个"配置清单"，只是信息没有手动创建的全面
+2. 安装
+    开发依赖：只有在项目开发阶段依赖的第三方模块
+    生产依赖：项目部署实施的时候，也需要依赖的第三方模块
+    [npm]
+        npm install xxx --save      保存到配置清单的生产依赖中
+        npm install xxx --save-dev  保存到开发依赖中
+3. 部署的时候跑环境
+不要自己一个个的安装 只需要执行 npm install 或者 yarn add 即可，npm会自己先检测目录中是否有package.json文件，如果有的话，会按照文件中的配置清单依次安装
+
+**安装在本地和全局的区别**
+```
+[安装在全局的特点]
+    1. 所有的项目都可以使用这个模块
+        -> 容易导致版本冲突
+        -> 安装在全局的模块，不能基于CommonJS模块规范调取使用（也就是不能再JS中通过require调取使用）
+
+[安装在本地的特点]
+    2. 只能当前项目使用这个模块
+        -> 不能直接的使用命令操作（安装在全局可以使用命令）
+
+
+为啥安装在全局下可以使用命令
+ npm root /-g 查看本地项目或者全局环境下，npm的安装目录
+  安装在全局目录下的模块，大部分都会生成一个xxx.cmd的文件，只要有这个文件，那么xxx就是一个可执行的命令
+
+能否即安装在本地，又可以使用命令行
+    可以，但是需要配置package.json中的scripts
+    1. 把模块安装在本地，如果是支持命令操作的（会在node_modules中的bin问生成xxx.cmd的命令文件，只不过这个文件无法在全局下执行，也就是不能直接用命令）
+    2. 在package.json的scripts中配置需要执行的命令脚本
+        "scripts":{
+            "awesome":"npm -v"   属性名自己设置即可，属性值时需要执行的脚本，根据需要自己编写（可以配置很多命令）
+        }
+    3. npm run awesome / yarn awesome 这样的操作就是把配置的脚本执行
+        -> 首先到配置清单的scripts中查找
+        -> 找到把后面对应的属性值（执行脚本）执行
+        -> 执行脚本的时候会在本地node_modules中的bin文件夹中查找，没有的话，再想npm安装的全局目录下查找
+```
+
+
+
+###node做后台的优势和特点
+- 单线程
+- 基于V8引擎渲染：快
+- 非阻塞异步I/O操作：I/O（input/output）对文件的读写
+- event-driven：事件驱动
 
 
 
 
 
-
-
-
-
-
-
-
-
-###module.exports 
+### module
 - 每一个模块都默认传了5个参数
     - exports       导入      模块中的this就是exports
     - require       导出
     - module        寻找模块经历的路径
-    - __filename    文件的绝对路径
+    - __filename    文件的绝对路径(包含文件名)
     - __dirname     文件的绝对目录
 
 ```javascript
@@ -53,11 +83,12 @@ bower 从github下载安装
     var greet = function(){
         console.log('hello')
     };
-    module.exports = greet;
+    module.exports = exports =  greet;
 })
 fn(module.exports,require,module,filename,dirname)
 return module.exports
 ```
+
 **分类**
 1. 内置模块 node自带的模块，自带的模块不需要安装直接require导入，路径不需要./，直接模块名字就可以
 2. 自定义模块 自己写的模块，使用require需要带./
@@ -65,7 +96,6 @@ return module.exports
     导入的时候不需要./ 
     1. 先看是不是内置模块 不是再找第三方模块
     2. 找安装的node_modules的顺序是按照module.path顺序找的
-    
 
 > 导入的文件如果省略后缀，文件后缀的顺序会按照下面的extensions来匹配
 > extensions: { '.js': [Function], '.json': [Function], '.node': [Function] }
@@ -78,13 +108,28 @@ if(cachedModule){
 ```
 > 重复require('xxx')时，会在内存中缓存下当前这个模块，不论当前文件夹中require多少次，或者在不同的目录中require都是使用当前内存中缓存过的这个模块
 
-###Buffer
-Buffer.from(string[,encoding]) :返回一个新建的包含所提供的字符串的副本的buffer  **默认为utf8**
-Buffer.from(array)             :返回一个被 array 的值初始化的新的 Buffer 实例（传入的 array 的元素只能是数字，不然就会自动被 0 覆盖）
-Buffer.from(buffer)            :返回一个新建的包含所提供的 Buffer 的内容的副本的 Buffer。（一个修改不会导致另一个跟着变化）
-Buffer.alloc(size[,fill[,encoding]]) :返回一个指定大小的被填满的Buffer实例,如果没有设置fill，默认为0。、
+**CommonJS**
+- CommonJS规定，每一个JS都是一个单独的模块（模块时私有的，里面涉及的值和变量以及函数等都是私有的，和其它JS文件中的内容是不冲突的）
+- CommonJS中可以允许模块中的方法户向的调用 [导出]
+   - CommonJS给每一个模块都设置了内置的变量/属性/方法
+   - Module:代表当前这个模块对象
+   - module.exports:模块的这个 *属性* 是用来导出属性方法的
+   - exports:是内置的一个 *变量* ，也是用来导出当前模块属性方法的，虽然和module.exports不是一个对象，但是对应的值是同一个
+- [导入]
+    - 
 
-###Stream
+- CommonJS特点
+    - 所有代码都运行在模块作用域，不会污染全局作用域（每一个模块都是私有的，包括里面所有的东西也都是私有的，不会和其他模块产生干扰）
+    - 模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就会被缓存了，以后在加载，就直接读取缓存结果，要想让模块再次运行，必须清除缓存（为了保证性能，减少模块代码重复执行的次数）
+    - 模块加载的顺序，按照其在代码中出现的顺序，CommonJS规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作
+
+### Buffer
+- Buffer.from(string[,encoding]) :返回一个新建的包含所提供的字符串的副本的buffer  **默认为utf8**
+- Buffer.from(array)             :返回一个被 array 的值初始化的新的 Buffer 实例（传入的 array 的元素只能是数字，不然就会自动被 0 覆盖）
+- Buffer.from(buffer)            :返回一个新建的包含所提供的 Buffer 的内容的副本的 Buffer。（一个修改不会导致另一个跟着变化）
+- Buffer.alloc(size[,fill[,encoding]]) :返回一个指定大小的被填满的Buffer实例,如果没有设置fill，默认为0。、
+
+### Stream
 > Stream类继承自EventEmitter
 fs.createReadStream(pathname,options): 创建一个可读流，{highWaterMark：默认64*1024};
 数据流传递给消费者时触发'data'事件。给回调函数传递一个字符串
@@ -127,11 +172,14 @@ fs.createWriteStream(pathname,options):
 readable.pipe(destination[, options])   : 绑定一个 Writable 到 readable 上， 将可写流自动切换到 flowing 模式并将所有数据传给绑定的 Writable。数据流将被自动管理。这样，即使是可读流较快，目标可写流也不会超负荷（overwhelmed）。
 options:   end: 默认为true  在结束时调用 可写流writer.end()方法。
 
-###FS
+### FS
+fs.mkdir(path[,callback])  创建目录
+fs.appendFile(path[,callback(err)])  异步追加数据 没有文件则创建
+
 fs.readFile(path[,options],callback)
 - path:文件路径
-- options:   flag文件打开模式
-               encoding字符编码
+- options:  flag文件打开模式
+            encoding字符编码
 - callback:  回调函数  其中data是文件的内容
 
 fs.readFileSync(path[,options])   同步读取文件
@@ -142,8 +190,6 @@ fs.writeFileSync(file,data[,options],callback)
 
 
 fs.rename()
-
-
 flag：
 r	以读取模式打开文件。如果文件不存在抛出异常。
 r+	以读写模式打开文件。如果文件不存在抛出异常。
@@ -175,7 +221,7 @@ stats.birthtime/ctime/mtime/atime  文件的创建时间/最后一次被改变�
 
 
 
-###path
+### path
 - path.dirname(path)  返回一个path的目录名
 ```javascript
 path.dirname('/a/b/c/d');
@@ -202,11 +248,10 @@ path.parse('C:\\path\\dir\\file.txt');
 - path.join()只是一个函数  path.resolve()会返回当前工作目录的绝对路径
 - path.join()只是把当前传递进去的*path*片段之间用当前操作系统指定的分隔符拼接在一起
 - path.resolve([...path]) 会从右向左一直尝试去拼接出一个绝对路径。
-- '/':  path.resolve()会把这个符号当作当前工作目录的根目录，也就是说只要在*path*片段中碰到以这个符号开头的path片段，
-        前面的参数都会被忽略。
+- '/':  path.resolve()会把这个符号当作当前工作目录的根目录，也就是说只要在*path*片段中碰到以这个符号开头的path片段，前面的参数都会被忽略。
 
 
-###querystring
+### querystring
 - querystring.parse(str[,sep[,eq[,options]]])  
     - str      :  要解析的url字符串
     - sep      :  ‘&’
@@ -214,12 +259,31 @@ path.parse('C:\\path\\dir\\file.txt');
     - options  :  解码字符串时使用的函数，
     - query.stringify  与其用法相同，方式相反
 
-###url
+### url
 - url.parse(urlString[,parseQueryString[,slashesDenoteHost]])
     - 返回一个url对象
     - parseQueryString ： 默认false，为true时，解析后返回的对象上query属性会是一个对象
+```javascript
+Url {
+  protocol: 'https:',  //协议
+  slashes: true,    
+  auth: null, 
+  host: 'www.baidu.com:80',  //域名+端口
+  port: '80',             
+  hostname: 'www.baidu.com', //域名
+  hash: '#asdff',            //哈希
+  search: '?from=qq&id=222',
+  query: {                   //问号传参解析成对象
+      from:qq,
+      id:2222
+  },
+  pathname: '/user/login',   //路径
+  path: '/user/login?from=qq&id=222', 
+  href: 'https://www.baidu.com:80/user/login?from=qq&id=222#asdff' 
+}
+```
 
-###util
+### util
 - util.format()  返回一个格式化的字符串
 ```javascript
 util.format('%s:%s', 'foo', 'bar', 'baz'); // 'foo:bar baz'
@@ -229,10 +293,9 @@ util.format('%s:%s', 'foo', 'bar', 'baz'); // 'foo:bar baz'
 - util.types.is[type](value) : 判断类型
 
 
-###http
+### http
 ```javascript
 http.createServer((req,res) => {
-  
   res.end([data][,encoding][,callback])
 })
 ```
@@ -243,15 +306,11 @@ http.createServer((req,res) => {
 
 
 
+### uuid  &&  formidable
 
 
 
-
-###uuid  &&  formidable
-
-
-
-#Express
+# Express
 > app监听函数上，扩展了很多方法，包括get、post、delete、put，RESTful风格中的动词
 > app.方法名('路径名',方法)
 > 从上到下匹配，如果匹配到了并且相应结束，就不会继续向下走
@@ -263,9 +322,6 @@ http.createServer((req,res) => {
 app[method](path,function(){});
 app.all("*",function(){});
 ```
-
-
-
 
 **路径参数路由**
 把匹配到的结果生成一个对象放到req.params上
@@ -293,7 +349,6 @@ for (let index = 0; index < keyAry.length; index++) {
 console.log(obj);
 ```
 
-
 **req**
 - req.params   路径参数
 - req.url      整个的路径
@@ -301,7 +356,6 @@ console.log(obj);
 - req.headers  请求头
 - req.method   请求方法
 - req.query    请求参数
-
 
 **res**
 - res.json()        返回json
@@ -312,7 +366,7 @@ console.log(obj);
 
 
 
-###中间件
+### 中间件
 > 当我们访问到最终目标之前执行的内容
 *功能及特点*
 - next决定是否继续执行
