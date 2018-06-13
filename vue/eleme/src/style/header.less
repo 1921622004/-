@@ -1,0 +1,137 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+ul{
+    list-style: none;
+}
+.shop-header{
+    text-align: center;
+    font-size: 0;
+}
+
+.container{
+    font-size: 16px;
+}
+nav{
+    height: 1rem;
+    background:url('../images/header-bg.png') no-repeat;
+    background-size: 100%;
+    span{
+        font-size: 0.24rem;
+        float: left;
+        color: white;
+        margin-left: 0.14rem;
+        cursor: pointer;
+    }
+}
+h1{
+    position: absolute;
+    z-index: 2;
+    top:.72rem;
+    left: 50%;
+    margin-left: -0.28rem;
+    width: .56rem;
+    height: .56rem;
+    img{
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+}
+.shop-detail{
+    margin-top: .256rem;
+    text-align: center;
+    .shop-name{
+        margin: .1rem auto;
+        vertical-align: top;
+        font-size: 0;
+        .brand{
+            display: inline-block;
+            font-size: .12rem;
+            background-color:yellow;
+            color:#6a3709;
+        }
+        p{
+            display: inline-block;
+            line-height: .26rem;
+            font-size: .20rem;
+        }
+    }
+    .shop-header2{
+        margin: .1rem auto;
+        font-size: .12rem;
+        font-weight: normal;
+        span{
+            display: inline-block;
+            margin-left: .05rem;
+        }
+    }
+    .shop-msg{
+        margin: 0 auto;
+        width: 1.8rem;
+        height: 0.12rem;
+        word-wrap: break-word;
+        font-size: .1rem;
+        line-height: .12rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #cbcbcb;
+    }
+}
+.first-discount{
+    border: 0.01rem solid #dedede;
+    font-size: .10rem;
+    padding: .06rem;
+    width: 2.6rem;
+    margin: .1rem auto;
+    .sd-logo{
+        display: inline-block;
+        text-align: center;
+        width: 0.24rem;
+        background-color: green;
+        color: white;
+    }
+    .discount-num{
+        float: right;
+    }
+}
+.gift{
+    background-color: #fff8d7;
+    font-weight: bolder;
+    display: inline-block;
+    margin: .1rem auto;
+    font-size: 0;
+    span{
+        padding: .04rem;
+        font-size: .12rem;
+    }
+    .gift-l{
+        display: inline-block;
+        text-align: center;
+        border-right: .01rem dashed #333;
+    }
+    .gift-r{
+        display: inline-block;
+        text-align: center;
+    }
+}
+.header-router{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    border-bottom: .01rem solid #666;
+    div{
+        flex: 1;
+        text-align: center;
+        span{
+            display: inline-block;
+            padding: .05rem;
+        }
+    }
+}
+.active-link{
+    span{
+        border-bottom: .01rem solid blue;
+    }
+}

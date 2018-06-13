@@ -1,0 +1,29 @@
+const path = require('path')
+module.exports = {
+    entry:'./src/main.js',
+    output:{
+        filename:'build.js',
+        path:path.resolve('./build')
+    },
+    module:{
+        rules:[
+            {
+                test:/\.js$/i,
+                use:["babel-loader"],
+                exclude:/node_modules/
+            },
+            {
+                test:/\.css$/i,
+                use:["style-loader","css-loader"]
+            },
+            {
+                test:/\.less$/i,
+                use:["style-loader","css-loader","less-loader"]
+            },
+            {
+                test:/\.(jpg|gif|png|jpeg)$/i,
+                use:["url-loader?limit=5120"]
+            }
+        ]
+    }
+}
