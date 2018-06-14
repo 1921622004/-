@@ -2,18 +2,18 @@
     <div>
         <div class="list">
             <ul class="category-list">
-                <li v-for="(item,index) in list" :key="index">
+                <li v-for="(item,index) in list" :key="index" @click="scrollTo(item,index)">
                     <span>{{item.name}}</span>
                 </li>
             </ul>
-            <ul class="item-list">
-                <li v-for="(category,index) in list" :key="index">
+            <ul class="item-list" ref="scrollul">
+                <li v-for="(category,index) in list" :key="index" :ref="index">
                     <div class="c-title">
                         <span class="c-name">{{category.name}}</span>
                         <span class="c-description">{{category.description}}</span>
                     </div>
                     <ul>
-                        <li v-for="(item,index) in category.foods" :key="index">
+                        <li v-for="(item,index) in category.foods" :key="index" >
                      
                                 <div class="img-wrap">
                                     <img src="../images/111.jpeg" alt="">
@@ -62,9 +62,29 @@ export default {
             };
             xhr.send(null)
         })
-        console.log(this.list);
-        
     },  
+    methods:{
+        scrollTo(item,index){
+            let top = 0;
+            for(let i = 0; i<index; i++){
+                top += this.$refs[i][0].offsetHeight
+            };
+            let curScroll = this.$refs.scrollul.scrollTop;
+            let diff = top - curScroll;
+            let step = diff/300*17;
+            let usedTime = 0;
+            let timer = setInterval(() => {
+                usedTime += 17;
+                if(usedTime >= 300){
+                    this.$refs.scrollul.scrollTop = top;
+                    clearInterval(timer);
+                    return
+                }
+                this.$refs.scrollul.scrollTop += step;
+            },17)
+            
+        }
+    },
     components:{ orderCar }
 }
 </script>
