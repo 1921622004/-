@@ -1,9 +1,10 @@
 <template>
     <div>
         <div class="list">
-            <ul class="category-list">
+            <ul class="category-list" >
                 <li v-for="(item,index) in list" :key="index" @click="scrollTo(item,index)">
                     <span>{{item.name}}</span>
+                    <strong v-show="showNum(item,index)">{{computeOrder(item,index)}}</strong>
                 </li>
             </ul>
             <ul class="item-list" ref="scrollul">
@@ -14,7 +15,6 @@
                     </div>
                     <ul>
                         <li v-for="(item,index) in category.foods" :key="index" >
-                     
                                 <div class="img-wrap">
                                     <img src="../images/111.jpeg" alt="">
                                 </div>
@@ -30,15 +30,20 @@
                                         <span>￥{{item.specfoods[0].price}}</span>
                                     </div>
                                 </div>                                
-                        
-                            <strong class="plus"> + </strong>
+                            <div class="control">
+                                <strong class="minus" v-show="isOrder(item)" @click="sliceOne(item)"> - </strong>
+                                <span v-show="isOrder(item)">{{orderNum(item)}}</span>
+                                <strong class="plus" @click="orderOne(item)"> + </strong>
+                            </div>
+                            
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
         
-        <order-car :sum="sumPrice"></order-car>
+        <order-car :order.sync="checkedOrder" >
+        </order-car>
     </div>
 </template>
 
@@ -48,7 +53,9 @@ export default {
     data(){
         return {
             list:[],
-            sumPrice:0
+            sumPrice:0,
+            checkedOrder:[],
+            show:false
         }
     },
     async created(){
@@ -61,7 +68,7 @@ export default {
                 }
             };
             xhr.send(null)
-        })
+        }) 
     },  
     methods:{
         scrollTo(item,index){
@@ -83,6 +90,70 @@ export default {
                 this.$refs.scrollul.scrollTop += step;
             },17)
             
+        },
+        orderOne(item){
+            if(!this.isOrder(item)){
+                let obj = {};
+                obj.id = item.virtual_food_id;
+                obj.price = item.specfoods[0].price;
+                obj.name = item.name;
+                obj.orderNum = 1;
+                this.checkedOrder.push(obj)
+            }else{
+                for (let index = 0; index < this.checkedOrder.length; index++) {
+                    if(this.checkedOrder[index].id == item.virtual_food_id){
+                        this.checkedOrder[index].orderNum++
+                    }
+                }
+            }
+        },
+        isOrder(item){
+            return this.checkedOrder.some(cur => {
+                return cur.id == item.virtual_food_id && cur.orderNum>0 
+            })
+        },
+        sliceOne(item){
+            for (let index = 0; index < this.checkedOrder.length; index++) {
+                if(this.checkedOrder[index].id == item.virtual_food_id){
+                    this.checkedOrder[index].orderNum--;
+                    if(this.checkedOrder[index].orderNum === 0){
+                        this.checkedOrder.splice(index,1)
+                    }
+                }
+            }
+        },
+        orderNum(item){
+            for (let index = 0; index < this.checkedOrder.length; index++) {
+                if(this.checkedOrder[index].id == item.virtual_food_id){
+                    return this.checkedOrder[index].orderNum
+                }
+            }
+        },
+        showNum(item,index){
+            if(index < 2 ) return false;
+            let flag = false;
+            this.checkedOrder.forEach(element => {
+                for(let i = 0; i< item.foods.length; i++){
+                    if(item.foods[i].virtual_food_id == element.id){
+                        flag = true;
+                        break
+                    }
+                }
+            });           
+            return flag
+        },
+        computeOrder(item,index){
+            let count = 0;
+            let idAry = [];
+            item.foods.forEach(Item => {
+                idAry.push(Item.virtual_food_id)
+            });
+            this.checkedOrder.forEach(_item => {
+                if(idAry.indexOf(_item.id)>=0){
+                    count+=_item.orderNum;
+                }
+            })
+            return count
         }
     },
     components:{ orderCar }
@@ -94,14 +165,17 @@ export default {
         display: flex;
         flex-direction: row;
         height: 5.7rem;
+        margin-bottom: .5rem;
         .category-list{
             width: .9rem;
             overflow-y: scroll;
+            overflow-x: hidden;
             background-color: #eee;
             li{
                 width: .8rem;
                 padding: .17rem .07rem;
                 border-bottom: .01rem solid #dedede;
+                position: relative;
                 span{
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -109,6 +183,19 @@ export default {
                     display: -webkit-box;
                     -webkit-line-clamp: 3;
                     -webkit-box-orient: vertical;
+                }
+                strong{
+                    position: absolute;
+                    right: .05rem;
+                    top: .05rem;
+                    background: red;
+                    color: #fff;
+                    font-size: .1rem;
+                    line-height: .14rem;
+                    text-align: center;
+                    height: 0.14rem;
+                    width: 0.14rem;
+                    border-radius: 50%;
                 }
             }
             
@@ -165,17 +252,22 @@ export default {
                                 font-weight: bolder;
                             }
                         }
-                        strong{
+                        
+                        .control{
                             position: absolute;
                             bottom: 0;
-                            right: 0;
-                            color: white;
-                            background-color: gray;
-                            border-radius: 50%;
-                            width: 0.2rem;
-                            height: 0.2rem;
-                            text-align: center;
-                            line-height: .2rem;
+                            right: 0.2rem;
+                            strong{
+                                display: inline-block;
+                                margin-left: .2rem;
+                                color: white;
+                                background-color: gray;
+                                border-radius: 50%;
+                                width: 0.2rem;
+                                height: 0.2rem;
+                                text-align: center;
+                                line-height: .2rem;
+                            }
                         }
                     }
                 }
