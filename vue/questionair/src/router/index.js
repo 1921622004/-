@@ -13,8 +13,13 @@ export default new Router({
       redirect:'/mine'
     },
     {
+      path:'/list',
+      component:List
+    },
+    {
       path:'/mine',
       component:Mine,
+      name:'mine',
       children:[
         {
           path:'empty',

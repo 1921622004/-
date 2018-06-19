@@ -5,7 +5,7 @@
                 <h1 class="el-icon-question">问卷管理</h1>
             </el-col>
             <el-col :span="6">
-                <h2>我的问卷</h2>
+                <h2 @click="$router.push('/mine/list')">我的问卷</h2>
             </el-col>
         </el-row>
     </div>
