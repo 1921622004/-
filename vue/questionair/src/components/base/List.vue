@@ -30,13 +30,18 @@
             label="操作"
             width='250'>
         <template  slot-scope="scope">
-            <el-button size="mini">编辑</el-button>
+            <el-button 
+                size="mini"
+                :disabled="!(list[scope.$index].status==0)">编辑</el-button>
             <el-button 
                 size="mini" 
                 type="danger" 
                 @click="remove(scope.$index)"
                 plain>删除</el-button>
-            <el-button size="mini">查看数据</el-button>
+            <el-button 
+                size="mini"
+                @click="$router.push({name:'count',params:{id:scope.$index}})"
+                :disabled="list[scope.$index].status==0">查看数据</el-button>
         </template >
         </el-table-column>
         </el-table>
@@ -72,7 +77,17 @@ export default {
     name:'List',
     created(){
         this.list.forEach((item,index) => {
-            item.statusText = item.status == 0?'已发布':(item.status === 1?'发布中':'已结束')
+            switch(item.status){
+                case 0:
+                    item.statusText = '未发布';
+                    break;
+                case 1:
+                    item.statusText = '发布中';
+                    break;
+                case 2:
+                    item.statusText = '已结束';
+                    break;
+            }
             this.$set(this.list[index],'toRemove',false)
         })
     },
@@ -93,6 +108,11 @@ export default {
                     title:'3',
                     time:'2018-06-17',
                     status:0
+                },
+                {
+                    title:'3',
+                    time:'2018-06-17',
+                    status:2
                 }
             ],
             removeList:[]
