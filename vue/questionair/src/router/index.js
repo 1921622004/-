@@ -5,17 +5,22 @@ import Empty from '../components/base/Empty.vue'
 import List from '../components/base/List.vue'
 import Create from '../components/base/Create.vue'
 import Count from '../components/base/Count.vue'
+import Login from '../components/Login.vue'
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      redirect:'/mine'
+      redirect:'/login'
     },
     {
       path:'/list',
       component:List
+    },
+    {
+      path:'/login',
+      component:Login
     },
     {
       path:'/mine',

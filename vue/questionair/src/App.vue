@@ -1,21 +1,10 @@
 <template>
-      <el-container>
-          <el-header :height="'60px'">
-            <qus-header></qus-header>
-          </el-header>
-          <router-view></router-view>
-          
-      </el-container>
+  <router-view></router-view>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import Mine from './components/Mine.vue'
 export default {
   name: 'App',
-  components:{
-    qusHeader:Header
-  }
 }
 </script>
 
@@ -31,10 +20,6 @@ html,body{
 ul{
   list-style: none;
 }
-.el-header{
-  background-color: #409EFF;
-  width: 100%;
-  color: white;
-}
+
 
 </style>
