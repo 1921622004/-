@@ -7,13 +7,21 @@
                     label-position="top"
                     label-width="100%">
                     <el-form-item label="手机号" >
-                        <el-input type="text" auto-complete="off" ></el-input>
+                        <el-input 
+                            type="text"
+                            auto-complete="off" 
+                            v-model="user.phone"
+                            ></el-input>
                     </el-form-item>
                     <el-form-item label="密码" >
-                        <el-input type="password" auto-complete="off"></el-input>
+                        <el-input 
+                            type="password" 
+                            auto-complete="off"
+                            v-model="user.password"
+                        ></el-input>
                     </el-form-item>
                     <el-form-item style="text-align:center">
-                        <el-button size="large">登录</el-button>
+                        <el-button size="large" @click="loginFn">登录</el-button>
                     </el-form-item>
                 </el-form>
 
@@ -64,7 +72,7 @@
 </template>
 
 <script>
-import {register} from '../request'
+import {register,loginR} from '../request'
 import axios from 'axios';
 
 export default {
@@ -101,7 +109,6 @@ export default {
                 password:'',
                 confirmPassword:'',
             },
-            
             rule3:{
                 phone:[
                     {validator:checkPhone,trigger:'blur'}
@@ -112,6 +119,10 @@ export default {
                 confirmPassword:[
                     {validator:confirmPassword,trigger:'blur'}
                 ]
+            },
+            user:{
+                phone:'',
+                password:''
             }
         }
     },
@@ -134,14 +145,26 @@ export default {
                     flag = flase
                 }
             })
-            console.log(flag);
             if(flag){
                 register(phone,password).then(res => {
-                    console.log(res);
-                    
+                    if(res.code === 0){
+                        this.activeName = 'login'
+                    }else{
+                        // 报错处理
+                        this.$message.error('当前手机号已被注册。')
+                    }
                 })
-            }
-            
+            }    
+        },
+        loginFn(){
+            let {phone,password} = this.user;
+            loginR(phone,password).then(res => {
+                if(res.code === 0){
+                    this.$router.push('/mine')
+                }else{
+                    this.$message.error('请确认手机号及密码')
+                }
+            })
         }
     }
 }

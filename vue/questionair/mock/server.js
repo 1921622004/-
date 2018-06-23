@@ -1,37 +1,131 @@
-const Koa = require('koa');
-const bodyParser = require('koa-bodyparser');
-const Router = require('koa-router');
+const express = require('express')
+const session = require('express-session');
+const queryString = require('querystring');
 const util = require('util');
 const fs = require('fs');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
-let app = new Koa();
+let app = express();
+
+
 app.listen(3000);
 
-app.use(bodyParser());
-
-
-app.use(async (ctx,next) => {
-    ctx.set("Access-Control-Allow-Origin",ctx.request.header['Origin'])
-    // ctx.response.header("Access-Control-Allow-Origin", req.get('Origin'));
-    ctx.set("Access-Control-Allow-Credentials", true)
-    // ctx.response.header("Access-Control-Allow-Credentials", true);
-    ctx.set("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization,Accept,X-Requested-With")
-    // ctx.response.header("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization,Accept,X-Requested-With");
-    ctx.set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
-    // ctx.response.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    await next()
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.get('Origin'));
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization,Accept,X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  if (req.method === 'OPTIONS') {
+    res.send('Current services support cross domain requests!');
+    return;
+  }
+  next()
 })
 
+app.use(session({
+  secret: 'awesome',
+  resave: true,
+  saveUninitialized: true
+}))
 
-let register = new Router();
-register.post('/regsiter',async (ctx,next) => {
-    let data = ctx.request.body;
-    console.log(data);
+app.use((req, res, next) => {
+  let str = '';
+  req.on('data', chunk => {
+    str += chunk;
+  })
+  req.on('end', () => {
+    req.body = queryString.parse(str);
+    next();
+  })
 })
 
+app.use(async function (req, res, next) {
+  req.userData = JSON.parse(await readFile('./data/user.json', 'utf8'))
+  next()
+})
 
+app.post('/register', (req, res) => {
+  let {
+    query,
+    body,
+    userData
+  } = req;
+  let obj = {
+    phone: body.phone,
+    password: body.password
+  }
+  if (userData.find(item => item.phone === body.phone)) {
+    res.send({
+      code: 1,
+      message: 'no'
+    })
+  } else {
+    userData.push(obj);
+    writeFile('./data/user.json', JSON.stringify(userData))
+      .then(() => {
+        res.send({
+          code: 0,
+          message: 'ok'
+        })
+      })
+  }
 
-app.use(register.routes())
+});
+
+app.post('/login',(req,res) => {
+  let {body,userData} = req;
+  let {phone,password} = body;
+  if(userData.find(item => item.phone===phone && item.password === password)){
+    req.session.userID = phone;
+    res.send({
+      code:0,
+      message:'ok'
+    })
+  }else{
+    res.send({
+      code:1,
+      message:'no'
+    })
+  }
+})
+
+app.get('/getData',(req,res) => {
+  let {userData} = req;
+  let userID = req.session.userID;
+  let curUser = userData.find(item => item.phone == userID);
+  if(!curUser.list){
+    res.send({
+      code:1,
+      message:'no'
+    })
+  }else{
+    res.send({
+      code:0,
+      message:'ok',
+      list:curUser.list
+    })
+  }
+})
+
+app.post('/addNewQ',(req,res) => {
+  let {body,userData} = req;
+  let userID = req.session.userID;
+  console.log(userID);
+  
+  let curUser = userData.find(item => item.phone == userID);
+  if(!curUser.list){
+    curUser.list = []
+  };
+  console.log(body);
+  
+  curUser.list.push(body);
+  writeFile('./data/user.json',JSON.stringify(userData))
+    .then(() => {
+      res.send({
+        code:0,
+        message:'ok'
+      })
+    })
+})

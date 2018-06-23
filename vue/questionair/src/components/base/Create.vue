@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import {addNewQ} from '../../request'
 export default {
     name:'Create',
     data(){
@@ -160,14 +161,54 @@ export default {
             return [year,month,day].join('-');
         },
         publish(){
-            this.$confirm(`是否发布问卷？\n (此问卷有效期至${this.formatDate(this.deadline)})`,'提示')
+            let flag = this.checkDate();
+            if(flag){
+                this.$confirm(`是否发布问卷？\n (此问卷有效期至${this.formatDate(this.deadline)})`,'提示')
                 .then(() => {
                     //发布成功要做的事
+                    let obj = {
+                        title:this.title,
+                        deadline:this.deadline,
+                        questionList:this.list
+                    };
+                    debugger;
+                    if(obj.title === '这里是标题'){
+                        this.$message.error('请编辑您的问卷标题')
 
+                        return 
+                    }
+                    if(!obj.deadline){
+                        this.$message.error('请编辑您的问卷截至时间')
+                        return
+                    }
+                    if(obj.questionList.length <3 || obj.questionList.length>10){
+                        this.$message.error('问卷问题数量为3~10')
+                        return 
+                    };
+                    console.log(obj);
+                    
+                    obj.status = 1;
+                    console.log(obj);
+                    addNewQ(obj).then(res => {
+                        console.log(res);
+                        if(res.code === 0){
+                            this.$router.push({name:'list'})
+                        }else{
+                            this.$message.error('请稍后重试')
+                        }
+                    })
                 }).catch(() => {
                     //发布失败
-
                 })
+            }
+        },
+        checkDate(){
+            let date = Date.now();
+            if(this.deadline < date){
+                this.$message.error('结束时间不能早于当前时间')
+                return false
+            }
+            return true
         }
     }
 }

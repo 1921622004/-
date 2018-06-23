@@ -1,63 +1,77 @@
-const express = require('express')
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const util = require('util');
-const fs = require('fs');
+/**
+ * 还是先用express吧 暂时搁置
+ */
 
+const Koa = require('koa');
+const Router = require('koa-router');
+const util = require('util');
+const queryString = require('querystring');
+const fs = require('fs');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
-
-let app = express();
-
+let app = new Koa();
 
 app.listen(3000);
-
-app.use((req,res,next) => {
-    res.header("Access-Control-Allow-Origin", req.get('Origin'));
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization,Accept,X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    next()
+// body-parser中间件
+// 设置跨域
+app.use(async (ctx, next) => {
+  ctx.userData = JSON.parse(await readFile('./data/user.json'))
+  await next()
 })
 
-app.use(session({
-    secret:'awesome',
-    resave:true,
-    saveUninitialized:true
-}))
+app.use(async (ctx, next) => {
+  ctx.set("Access-Control-Allow-Origin", ctx.request.header['origin'])
+  ctx.set("Access-Control-Allow-Credentials", true)
+  ctx.set("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization,Accept,X-Requested-With")
+  ctx.set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
+  if (ctx.request.method === 'OPTIONS') {
+    ctx.body = 'Current services support cross domain requests!'
+  }
+  await next()
+})
+app.use(async (ctx, next) => {
+  let str = '';
+  if (ctx.request.method === 'POST') {
+    ctx.req.on('data', chunk => {
+      str += chunk;
+    })
+    ctx.req.on('end', async () => {
+      ctx.myBody = queryString.parse(str);
+      await next()
+    })
+  } else {
+    await next()
+  }
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:false}))
-
-
-app.use(async function(req,res,next){
-    req.userData = JSON.parse(await readFile('./data/user.json','utf8'))
-    next()
 })
 
-app.post('/register',(req,res) => {
-    console.log(1);
-     
-    let {query,body,userData} = req;  
-    let obj = {
-        phone:body.phone,
-        password:body.password
+
+
+// let register = new Router();
+
+// register.post('/register',async (ctx,next) => {    
+//     let data = ctx.myBody;
+//     let userData = ctx.userData;
+//     userData.push(data);
+//     writeFile('./data/user.json',JSON.stringify(userData))
+//     ctx.response.status = 200;
+//     ctx.body = {
+//         code:0,
+//         message:'ok'
+//     }
+//     await next()
+// })
+// app.use(register.routes())
+
+app.use(async ctx => {
+  if (ctx.request.method === 'POST') {
+    if (ctx.request.url === '/register') {
+        let data = ctx.myBody;
+        let userData = ctx.userData;
+        userData.push(data);
+        console.log(userData);
+        writeFile('./data/user.json',JSON.stringify(userData));
+        ctx.body = 'ok'
     }
-    userData.push(obj);
-    writeFile('./data/user.json',JSON.stringify(userData))
-        .then(() =>{
-            res.send({
-                code:0,
-                message:'ok'
-            })
-        })
-        .catch(err => {
-            res.send({
-                code:1,
-                message:'no'
-            })
-        })
+  }
 })
-
-
-

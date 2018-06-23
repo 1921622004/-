@@ -23,7 +23,18 @@
 </template>
 
 <script>
+import {getData, loginR} from '../request'
 export default {
+    async created(){
+        await getData().then(res => {
+            if(res.code === 1){
+                this.$router.push('/mine/empty');
+            }else {
+                this.tableData = res.list;
+                this.$router.push('/mine/list')
+            }
+        })
+    },
     data(){
         return {
             tableData:[
