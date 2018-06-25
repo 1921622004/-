@@ -36,7 +36,11 @@ app.use((req, res, next) => {
     str += chunk;
   })
   req.on('end', () => {
-    req.body = queryString.parse(str);
+    if(req.get('content-type').indexOf('application/json') >=0){
+      req.body = JSON.parse(str);
+    }else{
+      req.body = queryString.parse(str)
+    }
     next();
   })
 })
@@ -112,20 +116,45 @@ app.get('/getData',(req,res) => {
 app.post('/addNewQ',(req,res) => {
   let {body,userData} = req;
   let userID = req.session.userID;
-  console.log(userID);
-  
   let curUser = userData.find(item => item.phone == userID);
   if(!curUser.list){
     curUser.list = []
   };
-  console.log(body);
-  
   curUser.list.push(body);
   writeFile('./data/user.json',JSON.stringify(userData))
     .then(() => {
       res.send({
         code:0,
         message:'ok'
+      })
+    })
+})
+
+app.post('/deleteQ',(req,res) => {
+  let {body,userData} = req;
+  let userID = req.session.userID;
+  let curUser = userData.find(item => item.phone == userID);
+  if(!curUser.list){
+    res.send({
+      code:1,
+      message:'ok'
+    })
+  }
+  for (let i = 0; i < body.length; i++) {
+    curUser.list[Number(body[i])] = undefined;
+  }
+  curUser.list = curUser.list.filter(item => typeof item !== 'undefined');
+  writeFile('./data/user.json',JSON.stringify(userData))
+    .then(() => {
+      res.send({
+        code:0,
+        message:'ok'
+      })
+    })
+    .catch(err => {
+      res.send({
+        code:1,
+        message:err
       })
     })
 })

@@ -48,13 +48,29 @@
         message:'ok'
     }
 
-### GET './getData'   获取数据
+### GET '/getData'   获取数据
     新用户 返回
     {
         code:1,
         message:'no'
     }
-    
+    如果已经有问卷 返回
+    {
+        code:0,
+        message:'ok',
+        list:[]
+    }
+
+
+### DELETE '/delete'  删除问卷
+    发送 [要删除的index]
+    返回
+    {
+        code:0,
+        message:'ok'
+    }
 
 ### 暂存问题：
-1. 新建问卷增加问题
+1. 新建问卷增加问题       check
+2. 新建问卷请求           check
+3. 新建问卷问题上下移动问题

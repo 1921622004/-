@@ -15,7 +15,7 @@
         <el-main>
             <div class="container">
                 <el-card class="card">
-                    <router-view></router-view>
+                    <router-view :list.sync='tableData'></router-view>
                 </el-card>
             </div>
         </el-main>

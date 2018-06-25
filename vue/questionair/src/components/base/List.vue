@@ -1,14 +1,14 @@
 <template>
     <div class="container">
         <el-table
-        :data="list"
+        :data="backUpList"
         style="width: 100%">
         <el-table-column
             width="70">
         <template  slot-scope="scope">
             <el-checkbox 
                 @change="addToRemoveList($event,scope.$index)"
-                v-model="list[scope.$index].toRemove"></el-checkbox>
+                v-model="backUpList[scope.$index].toRemove"></el-checkbox>
         </template >
         </el-table-column>
         <el-table-column
@@ -32,7 +32,7 @@
         <template  slot-scope="scope">
             <el-button 
                 size="mini"
-                :disabled="!(list[scope.$index].status==0)">编辑</el-button>
+                :disabled="!(backUpList[scope.$index].status==0)">编辑</el-button>
             <el-button 
                 size="mini" 
                 type="danger" 
@@ -41,7 +41,7 @@
             <el-button 
                 size="mini"
                 @click="$router.push({name:'count',params:{id:scope.$index}})"
-                :disabled="list[scope.$index].status==0">查看数据</el-button>
+                :disabled="backUpList[scope.$index].status==0">查看数据</el-button>
         </template >
         </el-table-column>
         </el-table>
@@ -73,10 +73,18 @@
 </template>
 
 <script>
+import {deleteQ} from '../../request'
+
 export default {
     name:'List',
+    props:{
+        list:{
+            type:Array,
+            default:[]
+        }
+    },
     created(){
-        this.list.forEach((item,index) => {
+        this.backUpList.forEach((item,index) => {
             switch(item.status){
                 case 0:
                     item.statusText = '未发布';
@@ -88,33 +96,12 @@ export default {
                     item.statusText = '已结束';
                     break;
             }
-            this.$set(this.list[index],'toRemove',false)
-        })
+            this.$set(this.backUpList[index],'toRemove',false)
+        });
     },
     data(){
         return {
-            list:[
-                {
-                    title:'1',
-                    time:'2018-06-17',
-                    status:1
-                },
-                {
-                    title:'2',
-                    time:'2018-06-17',
-                    status:2
-                },
-                {
-                    title:'3',
-                    time:'2018-06-17',
-                    status:0
-                },
-                {
-                    title:'3',
-                    time:'2018-06-17',
-                    status:2
-                }
-            ],
+            backUpList:this.list,
             removeList:[]
         }
     },
@@ -125,32 +112,61 @@ export default {
                 closeOnClickModal:false
             }).then(() => {
                 //这里需要发送数据
-                this.list = this.list.filter((item,_index) => _index!=index)
+                deleteQ([index]).then(res => {
+                    if(res.code == 0){
+                        this.$message('删除成功');
+                        this.backUpList = this.backUpList.filter((item,_index) => _index!=index);
+                        this.$emit('update:list',this.backUpList)
+                        this.jumpToCreate()
+                    }else{
+                        this.$message.error('请稍后重试')
+                    }
+                })
             }).catch(() => {})
         },
         addToRemoveList(flag,index){
             if(flag){
-                this.list[index].toRemove = true;
+                this.backUpList[index].toRemove = true;
                 return
             }
-            this.list[index].toRemove = false;
+            this.backUpList[index].toRemove = false;
         },
         removeSelected(){
             this.$confirm('确认要删除所选问卷？','提示',{
                 center:true,
                 closeOnClickModal:false
             }).then(() => {
-                this.list = this.list.filter(item => !item.toRemove)
+                let ary = [];
+                this.backUpList.forEach((item,index) => {
+                    if(item.toRemove){
+                        ary.push(index)
+                    }
+                })
+                deleteQ(ary).then(res => {
+                    if(res.code == 0){
+                        this.$message('删除成功');
+                        this.backUpList = this.backUpList.filter(item => !item.toRemove);
+                        this.$emit('update:list',this.backUpList)
+                        this.jumpToCreate();
+                    }else{
+                        this.$message.error('请稍后重试');
+                    }
+                })
             }).catch(() => {})
+        },
+        jumpToCreate(){
+            if(this.backUpList.length <= 0){
+                this.$router.push('/mine/empty');
+            }
         }
     },
     computed:{
         all:{
             get(){
-                return this.list.every(item => item.toRemove)
+                return this.backUpList.every(item => item.toRemove) && this.backUpList.length>0
             },
             set(val){
-                this.list.forEach(item => item.toRemove = val)
+                this.backUpList.forEach(item => item.toRemove = val)
             }
         }
     }

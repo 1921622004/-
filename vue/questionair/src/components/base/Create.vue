@@ -9,26 +9,27 @@
                 @keydown.enter="titleEditor=false">
             </el-input>
         </h1>
-        <ul>
-            <li v-for="(item,index) in list" :key="index" class="question-item">
+        <ul >
+            <li v-for="(item,index) in list" :key="index" class="question-item" >
                 <div v-if="item.type=='radio'">
-                    <p>Q{{index+1}}单选题</p>
+                    <p>Q{{index+1}}单选题：{{item.question}}</p>
                     <el-radio-group v-model="item.tab">
                         <el-radio v-for="(tab,_index) in item.tab" :label="tab" :key="_index" disabled></el-radio>
                     </el-radio-group>
                 </div>
                 <div v-else-if="item.type=='checkbox'">
-                    <p>Q{{index+1}}多选题</p>
+                    <p>Q{{index+1}}多选题：{{item.question}}</p>
                     <el-checkbox-group v-model="item.tab">
                         <el-checkbox v-for="(tab,_index) in item.tab" :label="tab" :key="_index" disabled></el-checkbox>
                     </el-checkbox-group>
                 </div>
                 <div v-else>
-                    <p>Q{{index+1}}多选题</p>
+                    <p>Q{{index+1}}文本题：{{item.question}}</p>
                     <el-input
                         type="textarea"
                         disabled>
                     </el-input>
+                    <el-checkbox v-model="item.isRequired" class="required-checkbox">此题是否为必填</el-checkbox>
                 </div>
                 <ul>
                     <li v-if="index !==0" @click="moveUp(index)">上移</li>
@@ -93,7 +94,7 @@
                     />
                 </el-col>
                 <el-col :offset="6" :span="4">
-                    <el-button  plain>保存问卷</el-button>
+                    <el-button  plain @click="save">保存问卷</el-button>
                 </el-col>
                 <el-col :span="4">
                     <el-button type="primary" plain @click="publish">发布问卷</el-button>
@@ -116,7 +117,8 @@ export default {
             newObj:{
                 type:'',
                 question:'',
-                tab:[]
+                tab:[],
+                isRequired:false
             },
             newTab:''
         }
@@ -130,8 +132,21 @@ export default {
             }
         },
         addNewQ(){
-            if(this.newTab.type !== 'input' && !this.newObj.tab.length){
+            let {newObj} = this;
+            if(newObj.type  === ''){
+                this.$message.error('请选择问题类型');
+                return 
+            }
+            if(newObj.question === ''){
+                this.$message.error('请编辑问题题目');
+                return
+            }
+            if(this.newObj.type !== 'input' && this.newObj.tab.length < 2){
+                console.log(newObj.type);
+                
                 // 类型不为文本框，选项为空所作的处理
+                this.$message.error('请至少添加两个问题答案选项');
+                return 
             }
             this.list.push(this.newObj);
             this.newObj = {
@@ -145,13 +160,16 @@ export default {
         },
         moveUp(index){
             let temp = this.list[index];
-            this.list = this.list.filter((item,_index) => _index != index);
-            this.list.splice(index-1,0,temp)
+            let tempB = this.list[index - 1];
+
+            this.$set(this.list,index,tempB);
+            this.$set(this.list,index-1,temp)
         },
         moveDown(index){
             let temp = this.list[index];
-            this.list = this.list.filter((item,_index) => _index != index);
-            this.list.splice(index,0,temp)
+            let tempA = this.list[index + 1];
+            this.$set(this.list,index,tempA);
+            this.$set(this.list,index + 1,temp);
         },
         formatDate(date){      
             let da = new Date(date);
@@ -166,31 +184,10 @@ export default {
                 this.$confirm(`是否发布问卷？\n (此问卷有效期至${this.formatDate(this.deadline)})`,'提示')
                 .then(() => {
                     //发布成功要做的事
-                    let obj = {
-                        title:this.title,
-                        deadline:this.deadline,
-                        questionList:this.list
-                    };
-                    debugger;
-                    if(obj.title === '这里是标题'){
-                        this.$message.error('请编辑您的问卷标题')
-
-                        return 
-                    }
-                    if(!obj.deadline){
-                        this.$message.error('请编辑您的问卷截至时间')
-                        return
-                    }
-                    if(obj.questionList.length <3 || obj.questionList.length>10){
-                        this.$message.error('问卷问题数量为3~10')
-                        return 
-                    };
-                    console.log(obj);
-                    
+                    let obj = this.formatObj();
+                    if(!this.checkQuestionList(obj)) return
                     obj.status = 1;
-                    console.log(obj);
                     addNewQ(obj).then(res => {
-                        console.log(res);
                         if(res.code === 0){
                             this.$router.push({name:'list'})
                         }else{
@@ -209,6 +206,43 @@ export default {
                 return false
             }
             return true
+        },
+        checkQuestionList(obj){
+            if(obj.title === '这里是标题'){
+                this.$message.error('请编辑您的问卷标题')
+                return false
+            }
+            if(!obj.deadline){
+                this.$message.error('请编辑您的问卷截至时间')
+                return false
+            }
+            if(obj.questionList.length <3 || obj.questionList.length>10){
+                this.$message.error('问卷问题数量为3~10')
+                return false
+            };
+            return true
+        },
+        save(){
+            if(!this.checkDate()) return;
+            let obj = this.formatObj();
+            console.log(obj);
+            
+            if(!this.checkQuestionList(obj)) return;
+            obj.status = 0;
+            addNewQ(obj).then(res => {
+                if(res.code === 0){
+                    this.$router.push({name:'list'})
+                }else{
+                    this.$message.error('请稍后重试')
+                }
+            })
+        },
+        formatObj(){
+            return {
+                title:this.title,
+                deadline:this.deadline,
+                questionList:this.list
+            }
         }
     }
 }
@@ -248,6 +282,7 @@ export default {
         .question-item{
             padding: 20px 20px 40px;
             position: relative;
+            transition: all .3s linear;
             &:hover{
                 background-color: #efefef;
             }
@@ -266,6 +301,11 @@ export default {
                     cursor: pointer;
                 }
             }
+        }
+        .required-checkbox{
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
     }
 </style>
