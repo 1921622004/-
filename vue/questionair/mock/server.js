@@ -117,11 +117,19 @@ app.post('/addNewQ',(req,res) => {
   let {body,userData} = req;
   let userID = req.session.userID;
   let curUser = userData.find(item => item.phone == userID);
+  // 如果没有list
   if(!curUser.list){
-    curUser.list = []
-  };
-  body.id = Date.now();
-  curUser.list.push(body);
+    curUser.list = [];
+    body.id = Date.now();
+    curUser.list.push(body);
+  }else {
+    let index = curUser.list.findIndex(item => item.id == body.id);
+    if(index >= 0){
+      curUser.list[index] = body;
+    } else {
+      curUser.list.push(body);
+    }
+  }
   writeFile('./data/user.json',JSON.stringify(userData))
     .then(() => {
       res.send({

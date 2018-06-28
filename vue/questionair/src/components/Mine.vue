@@ -15,7 +15,7 @@
         <el-main>
             <div class="container">
                 <el-card class="card">
-                    <router-view :list.sync='tableData' @re-query='reQueryData'></router-view>
+                    <router-view :initList.sync='tableData' @re-query='reQueryData'></router-view>
                 </el-card>
             </div>
         </el-main>

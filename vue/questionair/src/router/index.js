@@ -45,6 +45,10 @@ export default new Router({
           component:Count,
           name:'count',
           props:true
+        },
+        {
+          path:'create/:id',
+          component:Create
         }
       ]
     }

@@ -109,6 +109,18 @@ import {addNewQ} from '../../request'
 import {formatDate} from '../../utils'
 export default {    
     name:'Create', 
+    created(){
+        let id = this.$route.params.id;
+        if(!id) return;
+        let curQestion = this.initList.find(item => item.id == id);
+        this.list = curQestion.questionList;
+    },
+    props:{
+        initList:{
+            type:Array,
+            default:[]
+        }
+    },
     data(){
         return {
             titleEditor:false,
@@ -143,8 +155,6 @@ export default {
                 return
             }
             if(this.newObj.type !== 'input' && this.newObj.tab.length < 2){
-                console.log(newObj.type);
-                
                 // 类型不为文本框，选项为空所作的处理
                 this.$message.error('请至少添加两个问题答案选项');
                 return 

@@ -32,6 +32,7 @@
         <template  slot-scope="scope">
             <el-button 
                 size="mini"
+                @click="jumpToEdit(backUpList[scope.$index].id)"
                 :disabled="!(backUpList[scope.$index].status==0)">编辑</el-button>
             <el-button 
                 size="mini" 
@@ -78,7 +79,7 @@ import {formatDate} from '../../utils'
 export default {
     name:'List',
     props:{
-        list:{
+        initList:{
             type:Array,
             default:[]
         }
@@ -102,7 +103,7 @@ export default {
     },
     data(){
         return {
-            backUpList:JSON.parse(JSON.stringify(this.list))
+            backUpList:JSON.parse(JSON.stringify(this.initList))
         }
     },
     methods:{
@@ -116,7 +117,7 @@ export default {
                     if(res.code == 0){
                         this.$message('删除成功');
                         this.backUpList = this.backUpList.filter((item,_index) => _index!=index);
-                        this.$emit('update:list',this.backUpList)
+                        this.$emit('update:initList',this.backUpList)
                         this.jumpToCreate()
                     }else{
                         this.$message.error('请稍后重试')
@@ -146,7 +147,7 @@ export default {
                     if(res.code == 0){
                         this.$message('删除成功');
                         this.backUpList = this.backUpList.filter(item => !item.toRemove);
-                        this.$emit('update:list',this.backUpList)
+                        this.$emit('update:initList',this.backUpList)
                         this.jumpToCreate();
                     }else{
                         this.$message.error('请稍后重试');
@@ -158,6 +159,9 @@ export default {
             if(this.backUpList.length <= 0){
                 this.$router.push('/mine/empty');
             }
+        },
+        jumpToEdit(id){
+            this.$router.push(`/mine/create/${id}`)
         }
     },
     computed:{
