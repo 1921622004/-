@@ -38,7 +38,6 @@ export function getData(){
 export function addNewQ(newQ){
     axios.defaults.headers['content-type'] = 'application/json; charset=utf-8';
     axios.defaults.transformRequest = data => {
-        console.log(data);
         return JSON.stringify(data);
     }
     return axios.post('/addNewQ',newQ)

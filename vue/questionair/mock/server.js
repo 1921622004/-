@@ -120,6 +120,7 @@ app.post('/addNewQ',(req,res) => {
   if(!curUser.list){
     curUser.list = []
   };
+  body.id = Date.now();
   curUser.list.push(body);
   writeFile('./data/user.json',JSON.stringify(userData))
     .then(() => {

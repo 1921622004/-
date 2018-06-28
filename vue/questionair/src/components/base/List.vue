@@ -74,7 +74,7 @@
 
 <script>
 import {deleteQ} from '../../request'
-
+import {formatDate} from '../../utils'
 export default {
     name:'List',
     props:{
@@ -95,14 +95,14 @@ export default {
                 case 2:
                     item.statusText = '已结束';
                     break;
-            }
+            };
+            item.time = formatDate(item.deadline);
             this.$set(this.backUpList[index],'toRemove',false)
         });
     },
     data(){
         return {
-            backUpList:this.list,
-            removeList:[]
+            backUpList:JSON.parse(JSON.stringify(this.list))
         }
     },
     methods:{

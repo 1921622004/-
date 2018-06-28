@@ -106,8 +106,9 @@
 
 <script>
 import {addNewQ} from '../../request'
-export default {
-    name:'Create',
+import {formatDate} from '../../utils'
+export default {    
+    name:'Create', 
     data(){
         return {
             titleEditor:false,
@@ -171,17 +172,10 @@ export default {
             this.$set(this.list,index,tempA);
             this.$set(this.list,index + 1,temp);
         },
-        formatDate(date){      
-            let da = new Date(date);
-            let year = da.getFullYear();
-            let month = da.getMonth()+1;
-            let day = da.getDate();
-            return [year,month,day].join('-');
-        },
         publish(){
             let flag = this.checkDate();
             if(flag){
-                this.$confirm(`是否发布问卷？\n (此问卷有效期至${this.formatDate(this.deadline)})`,'提示')
+                this.$confirm(`是否发布问卷？\n (此问卷有效期至${formatDate(this.deadline)})`,'提示')
                 .then(() => {
                     //发布成功要做的事
                     let obj = this.formatObj();
@@ -189,6 +183,7 @@ export default {
                     obj.status = 1;
                     addNewQ(obj).then(res => {
                         if(res.code === 0){
+                            this.$emit('re-query');
                             this.$router.push({name:'list'})
                         }else{
                             this.$message.error('请稍后重试')
@@ -225,13 +220,12 @@ export default {
         save(){
             if(!this.checkDate()) return;
             let obj = this.formatObj();
-            console.log(obj);
-            
             if(!this.checkQuestionList(obj)) return;
             obj.status = 0;
             addNewQ(obj).then(res => {
                 if(res.code === 0){
-                    this.$router.push({name:'list'})
+                    this.$emit('re-query')
+                    this.$router.push({name:'list'});
                 }else{
                     this.$message.error('请稍后重试')
                 }

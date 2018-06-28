@@ -15,7 +15,7 @@
         <el-main>
             <div class="container">
                 <el-card class="card">
-                    <router-view :list.sync='tableData'></router-view>
+                    <router-view :list.sync='tableData' @re-query='reQueryData'></router-view>
                 </el-card>
             </div>
         </el-main>
@@ -44,6 +44,16 @@ export default {
                     status:'已发布'
                 }
             ]
+        }
+    },
+    methods:{
+        async reQueryData(){
+            await getData.then(res => {
+                console.log(res);
+                if(res.code == 0){
+                    this.tableData = res.list;
+                }
+            })
         }
     },
     name:'Mine'
